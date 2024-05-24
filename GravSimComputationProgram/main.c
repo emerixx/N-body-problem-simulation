@@ -129,17 +129,19 @@ void computeAndWrite(int loop, body bodies[]){
     }
 
        
-    bodies[i].accelerationOld[0] = bodies[i].acceleration[0];
-    bodies[i].accelerationOld[1] = bodies[i].acceleration[1];
+     
 
-    bodies[i].acceleration[0] = force[0] / bodies[i].mass;
-    bodies[i].acceleration[1] = force[1] / bodies[i].mass;
-
+   
+   
     double k1[2];
     double k2[2];
     double k4[2];
     for (int j = 0; j < 2; j++){
-
+      
+      bodies[i].accelerationOld[j] = bodies[i].acceleration[j];
+      
+      
+      bodies[i].acceleration[j] = force[j] / bodies[i].mass;
       
       k1[j] = bodies[i].accelerationOld[j];
     

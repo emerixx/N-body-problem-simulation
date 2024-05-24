@@ -1,0 +1,20 @@
+----------Masses---------
+mass (body 0): 1.000000;
+mass (body 1): 1.000000;
+mass (body 2): 1.000000;
+mass (body 3): 1.000000;
+mass (body 4): 1.000000;
+
+----------Positions---------
+position (body 0): {2.000000, -2.000000};
+position (body 1): {0.740000, 2.000000};
+position (body 2): {-1.000000, -1.000000};
+position (body 3): {1.000000, -0.750000};
+position (body 4): {1.000000, 0.880000};
+
+----------Velocities---------
+velocity (body 0): {-2.700000, 0.700000};
+velocity (body 1): {2.250000, 2.000000};
+velocity (body 2): {3.750000, 0.250000};
+velocity (body 3): {1.700000, 0.000000};
+velocity (body 4): {-1.830000, 1.250000};

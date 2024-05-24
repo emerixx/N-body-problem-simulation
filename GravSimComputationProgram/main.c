@@ -33,6 +33,7 @@ typedef struct body{
   double mass;
   double position[2];
   double velocity[2];
+  double velocityOld[2];
   double acceleration[2];
   double accelerationOld[2];
   FILE *bodyFile;
@@ -94,6 +95,8 @@ void createBodyFiles(body bodies[]) {
   }
 }
 
+
+
 void computeAndWrite(int loop, body bodies[]){
   for (int i = 0; i < NofBodies; i++){
     double force[] = {0, 0};
@@ -125,18 +128,45 @@ void computeAndWrite(int loop, body bodies[]){
 
     }
 
-    bodies[i].position[0] += bodies[i].velocity[0] * timeDelta + bodies[i].acceleration[0] / 2 * pow(timeDelta, 2);
-    bodies[i].position[1] += bodies[i].velocity[1] * timeDelta + bodies[i].acceleration[1] / 2 * pow(timeDelta, 2);
-    
+       
     bodies[i].accelerationOld[0] = bodies[i].acceleration[0];
     bodies[i].accelerationOld[1] = bodies[i].acceleration[1];
 
     bodies[i].acceleration[0] = force[0] / bodies[i].mass;
     bodies[i].acceleration[1] = force[1] / bodies[i].mass;
 
-    bodies[i].velocity[0] += (bodies[i].acceleration[0] + bodies[i].accelerationOld[0]) / 2 * timeDelta;
-    bodies[i].velocity[1] += (bodies[i].acceleration[1] + bodies[i].accelerationOld[1]) / 2 * timeDelta;
+    double k1[2];
+    double k2[2];
+    double k4[2];
+    for (int j = 0; j < 2; j++){
+
+      
+      k1[j] = bodies[i].accelerationOld[j];
     
+      k2[j] = (bodies[i].accelerationOld[j] + bodies[i].acceleration[j])/2;
+    
+      k4[j] = bodies[i].acceleration[j];
+
+
+      bodies[i].velocityOld[j] = bodies[i].velocity[j];
+      bodies[i].velocity[j] += timeDelta*(k1[j] + 4*k2[j] + k4[j])/6;
+      
+      k1[j] = bodies[i].velocityOld[j];
+    
+      k2[j] = (bodies[i].velocityOld[j] + bodies[i].velocity[j])/2;
+    
+      k4[j] = bodies[i].velocity[j];
+
+      bodies[i].position[j] += timeDelta*(k1[j] + 4*k2[j] + k4[j])/6;
+
+
+
+  
+ 
+
+
+    }
+
     if (loop % compress == 0){
       char out[50] = {0};
       sprintf(out, "%f,%f\n", bodies[i].position[0], bodies[i].position[1]);

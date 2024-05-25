@@ -133,33 +133,24 @@ void computeAndWrite(int loop, body bodies[]){
 
    
    
-    double k1[2];
-    double k2[2];
-    double k4[2];
+  
     for (int j = 0; j < 2; j++){
-      
+      double k1;
+      double k2;
+      double k4;
+
+
       bodies[i].accelerationOld[j] = bodies[i].acceleration[j];
       
       
       bodies[i].acceleration[j] = force[j] / bodies[i].mass;
       
-      k1[j] = bodies[i].accelerationOld[j];
     
-      k2[j] = (bodies[i].accelerationOld[j] + bodies[i].acceleration[j])/2;
-    
-      k4[j] = bodies[i].acceleration[j];
-
 
       bodies[i].velocityOld[j] = bodies[i].velocity[j];
-      bodies[i].velocity[j] += timeDelta*(k1[j] + 4*k2[j] + k4[j])/6;
-      
-      k1[j] = bodies[i].velocityOld[j];
-    
-      k2[j] = (bodies[i].velocityOld[j] + bodies[i].velocity[j])/2;
-    
-      k4[j] = bodies[i].velocity[j];
-
-      bodies[i].position[j] += timeDelta*(k1[j] + 4*k2[j] + k4[j])/6;
+      bodies[i].velocity[j] += timeDelta*(bodies[i].acceleration[j]+bodies[i].accelerationOld[j])/2;
+  
+      bodies[i].position[j] += timeDelta*(bodies[i].velocity[j]+bodies[i].velocityOld[j])/2;
 
 
 

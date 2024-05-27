@@ -15,7 +15,7 @@ const int maxFiles = 20;
 
 const double width = 1800;
 const double height = 900;
-const int drawScale = 50;
+const int drawScale = 100;
 
 const int offset[2] = {0,0};
 

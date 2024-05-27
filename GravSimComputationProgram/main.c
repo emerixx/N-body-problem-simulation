@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdint.h>
 #include <math.h>
 #include <sys/stat.h>
 #include <time.h>
@@ -9,8 +10,8 @@ char outputFolderName[] = "../outputTxtFiles";
 double positions; // number of lines in an object's file. The lenght of the simulation
 double timeDelta; // time step every loop, accuracy of the simulation. lower number -> higher accuracy
     
-int logsPerComputation; // how many lines are written to the console during the computation (info about progress)
-int compress; // write only every {compress} positions to reduce file size. when decreaseing timeDelta, its recommended to increase this
+int64_t logsPerComputation; // how many lines are written to the console during the computation (info about progress)
+int64_t compress; // write only every {compress} positions to reduce file size. when decreaseing timeDelta, its recommended to increase this
     
 //constants constants
 double gravityConstant = 39.4947001202; // AU^3 MO^-1 Year^-2
@@ -97,7 +98,7 @@ void createBodyFiles(body bodies[]) {
 
 
 
-void computeAndWrite(int loop, body bodies[]){
+void computeAndWrite(int64_t loop, body bodies[]){
   for (int i = 0; i < NofBodies; i++){
     double force[] = {0, 0};
     
@@ -136,21 +137,43 @@ void computeAndWrite(int loop, body bodies[]){
   
     for (int j = 0; j < 2; j++){
       double k1;
-      double k2;
+      double k3;
       double k4;
-
+      double k5;
+      double k6;
+      double someValue;
 
       bodies[i].accelerationOld[j] = bodies[i].acceleration[j];
-      
-      
       bodies[i].acceleration[j] = force[j] / bodies[i].mass;
       
-    
+      
+      k1 = bodies[i].accelerationOld[j] * timeDelta;
+      k3 = (bodies[i].acceleration[j] * timeDelta) / 3;
+      k4 = (bodies[i].acceleration[j] * 3 * timeDelta) / 4;
+      k5 = (bodies[i].acceleration[j] * timeDelta);
+      k6 = (bodies[i].acceleration[j] * 5 * timeDelta) / 6;
+      
 
+
+
+
+      
       bodies[i].velocityOld[j] = bodies[i].velocity[j];
-      bodies[i].velocity[j] += timeDelta*(bodies[i].acceleration[j]+bodies[i].accelerationOld[j])/2;
-  
-      bodies[i].position[j] += timeDelta*(bodies[i].velocity[j]+bodies[i].velocityOld[j])/2;
+      bodies[i].velocity[j] += (k1*47/150) + (k3*12/25) + (k4*32/225) + (k5*1/30) + (k6*6/25);
+
+      
+      k1 = bodies[i].velocityOld[j] * timeDelta;
+      k3 = (bodies[i].velocity[j] * timeDelta) / 3;
+      k4 = (bodies[i].velocity[j] * 3 * timeDelta) / 4;
+      k5 = (bodies[i].velocity[j] * timeDelta);
+      k6 = (bodies[i].velocity[j] * 5 * timeDelta) / 6;
+      
+
+
+      
+
+
+      bodies[i].position[j] += (k1*47/150) + (k3*12/25) + (k4*32/225) + (k5*1/30) + (k6*6/25);
 
 
 
@@ -160,7 +183,7 @@ void computeAndWrite(int loop, body bodies[]){
 
     }
 
-    if (loop % compress == 0){
+    if (loop % (int64_t)compress == 0){
       char out[50] = {0};
       sprintf(out, "%f,%f\n", bodies[i].position[0], bodies[i].position[1]);
       
@@ -172,7 +195,7 @@ void computeAndWrite(int loop, body bodies[]){
 
     
   }
-  if (loop % (int)(positions / logsPerComputation) == 0){
+  if (loop % (int64_t)(positions / logsPerComputation) == 0){
     double done = loop / positions;
     curTime = clock();
     double timeElapsed =(double)(curTime - start) / (double)(CLOCKS_PER_SEC);
@@ -188,6 +211,7 @@ int main(){
   start = clock();
   
   //specify initial conditions
+  
   double massInit[] = { 1, 1, 1, 1, 1 };
   double posInit[][2] =
   {
@@ -207,6 +231,8 @@ int main(){
 
 
   };
+
+
   NofBodies = sizeof(massInit) / sizeof(massInit[0]);
 
   body bodies[NofBodies]; 
@@ -223,7 +249,7 @@ int main(){
 
   positions = pow(10, 8);
   timeDelta = pow(10, -8);
-  logsPerComputation = pow(10, 2);
+  logsPerComputation = pow(10, 3);
   compress = pow(10, 4);
 
   createOutputFolder();
@@ -234,7 +260,7 @@ int main(){
 
   createBodyFiles(bodies);
   
-  for (int i = 0; i < positions; i++){
+  for (int64_t i = 0; i < positions; i++){
     
     computeAndWrite(i, bodies);
   }

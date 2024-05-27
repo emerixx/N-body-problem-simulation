@@ -146,34 +146,14 @@ void computeAndWrite(int64_t loop, body bodies[]){
       bodies[i].accelerationOld[j] = bodies[i].acceleration[j];
       bodies[i].acceleration[j] = force[j] / bodies[i].mass;
       
-      
-      k1 = bodies[i].accelerationOld[j] * timeDelta;
-      k3 = (bodies[i].acceleration[j] * timeDelta) / 3;
-      k4 = (bodies[i].acceleration[j] * 3 * timeDelta) / 4;
-      k5 = (bodies[i].acceleration[j] * timeDelta);
-      k6 = (bodies[i].acceleration[j] * 5 * timeDelta) / 6;
-      
-
-
-
 
       
       bodies[i].velocityOld[j] = bodies[i].velocity[j];
-      bodies[i].velocity[j] += (k1*47/150) + (k3*12/25) + (k4*32/225) + (k5*1/30) + (k6*6/25);
-
-      
-      k1 = bodies[i].velocityOld[j] * timeDelta;
-      k3 = (bodies[i].velocity[j] * timeDelta) / 3;
-      k4 = (bodies[i].velocity[j] * 3 * timeDelta) / 4;
-      k5 = (bodies[i].velocity[j] * timeDelta);
-      k6 = (bodies[i].velocity[j] * 5 * timeDelta) / 6;
+      bodies[i].velocity[j] += timeDelta * (282 * bodies[i].accelerationOld[j] + 445 * bodies[i].acceleration[j]) / 900;
       
 
 
-      
-
-
-      bodies[i].position[j] += (k1*47/150) + (k3*12/25) + (k4*32/225) + (k5*1/30) + (k6*6/25);
+      bodies[i].position[j] += timeDelta * (282 * bodies[i].velocityOld[j] + 445 * bodies[i].velocity[j]) / 900;
 
 
 

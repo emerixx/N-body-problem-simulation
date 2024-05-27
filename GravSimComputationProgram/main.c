@@ -37,6 +37,8 @@ typedef struct body{
   double velocityOld[2];
   double acceleration[2];
   double accelerationOld[2];
+  double gravPotEnergy;
+  double kineticEnergy;
   FILE *bodyFile;
 } body ;
 
@@ -121,7 +123,7 @@ void computeAndWrite(int64_t loop, body bodies[]){
       
 
       
-   
+      bodies[i].gravPotEnergy = sqrt( pow(forceThis[0], 2) + pow(forceThis[1], 2)) * distance;  
       
       force[0] += forceThis[0];
       force[1] += forceThis[1];
@@ -136,33 +138,45 @@ void computeAndWrite(int64_t loop, body bodies[]){
    
   
     for (int j = 0; j < 2; j++){
-      double k1;
-      double k3;
-      double k4;
-      double k5;
-      double k6;
-      double someValue;
+      double k1, k3, k4, k5, k6;
 
       bodies[i].accelerationOld[j] = bodies[i].acceleration[j];
       bodies[i].acceleration[j] = force[j] / bodies[i].mass;
-      
 
-      
+
+      k1 = bodies[i].accelerationOld[j] * timeDelta;
+      k3 = (bodies[i].acceleration[j] * timeDelta * 3) / 8;
+      k4 = (bodies[i].acceleration[j] * timeDelta * 12) / 13;
+      k5 = (bodies[i].acceleration[j] * timeDelta);
+      k6 = (bodies[i].acceleration[j] * timeDelta) / 2;
+
+
+
+
+
+
       bodies[i].velocityOld[j] = bodies[i].velocity[j];
-      bodies[i].velocity[j] += timeDelta * (282 * bodies[i].accelerationOld[j] + 445 * bodies[i].acceleration[j]) / 900;
-      
+      bodies[i].velocity[j] += (k1*16/135) + (k3*6656/12825) + (k4*28561/56430) + (k5*-9/50) + (k6*2/55);
+
+      k1 = bodies[i].velocityOld[j] * timeDelta;
+      k3 = (bodies[i].velocity[j] * timeDelta * 3) / 8;
+      k4 = (bodies[i].velocity[j] * timeDelta * 12) / 13;
+      k5 = (bodies[i].velocity[j] * timeDelta);
+      k6 = (bodies[i].velocity[j] * timeDelta) / 2;
 
 
-      bodies[i].position[j] += timeDelta * (282 * bodies[i].velocityOld[j] + 445 * bodies[i].velocity[j]) / 900;
+    
 
 
-
-  
+      bodies[i].position[j] += (k1*16/135) + (k3*6656/12825) + (k4*28561/56430) + (k5*-9/50) + (k6*2/55);
+    
  
 
 
     }
-
+    bodies[i].kineticEnergy = bodies[i].mass/2 * sqrt( pow(bodies[i].velocity[0], 2) + pow(bodies[i].velocity[1], 2));
+    
+    
     if (loop % (int64_t)compress == 0){
       char out[50] = {0};
       sprintf(out, "%f,%f\n", bodies[i].position[0], bodies[i].position[1]);
@@ -180,7 +194,18 @@ void computeAndWrite(int64_t loop, body bodies[]){
     curTime = clock();
     double timeElapsed =(double)(curTime - start) / (double)(CLOCKS_PER_SEC);
     double approxTimeLeft = timeElapsed / done - timeElapsed;
-    printf("Done : %f %%; Time Elapsed : %f s; approx time left : %f s; \n", done*100, timeElapsed, approxTimeLeft);
+    double totalEnergy;
+    double sumOfKEs;
+    double sumOfGravPots;
+    
+    for (int j = 0; j < NofBodies; j++){
+      sumOfKEs += bodies[j].kineticEnergy;
+    
+      sumOfGravPots += bodies[j].gravPotEnergy;
+    }
+    
+    totalEnergy = sumOfKEs - sumOfGravPots / 2;
+    printf("Done : %f %%; Time Elapsed : %f s; approx time left : %f s; Total energy : %f ; \n", done*100, timeElapsed, approxTimeLeft, totalEnergy);
   }
 }
 
@@ -192,22 +217,16 @@ int main(){
   
   //specify initial conditions
   
-  double massInit[] = { 1, 1, 1, 1, 1 };
+  double massInit[] = { 1, 1 };
   double posInit[][2] =
   {
-    {2, -2},
-    {0.74, 2},
-    {-1, -1},
-    {1, -0.75},
-    {1, 0.88}
+    {0, 1},
+    {0, -0.5}
   };
   double velInit[][2] =
   {
-    {-2.7, 0.7},
-    {2.25, 2},
-    {3.75, 0.25},
-    {1.7, 0},
-    {-1.83, 1.25}
+    {-2.25, 0},
+    {2.25, 0}
 
 
   };
@@ -227,10 +246,10 @@ int main(){
   }
 
 
-  positions = pow(10, 8);
-  timeDelta = pow(10, -8);
+  positions = pow(10, 6);
+  timeDelta = pow(10, -5);
   logsPerComputation = pow(10, 3);
-  compress = pow(10, 4);
+  compress = pow(10, 2);
 
   createOutputFolder();
  

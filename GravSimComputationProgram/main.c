@@ -14,12 +14,12 @@ int64_t logsPerComputation; // how many lines are written to the console during 
 int64_t compress; // write only every {compress} positions to reduce file size. when decreaseing timeDelta, its recommended to increase this
     
 //constants constants
-double gravityConstant = 39.4947001202; // AU^3 MO^-1 Year^-2
+double gravityConstant = 39.478417604; // AU^3 MO^-1 Year^-2
 
 int NofBodies;
 
-clock_t start, curTime, end;
 
+clock_t start, curTime, end;
   
   
 
@@ -120,7 +120,7 @@ void computeAndWrite(int64_t loop, body bodies[]){
 
       forceThis[0] = -(gravityConstant * bodies[i].mass * bodies[j].mass * distanceAsVector[0]) / pow(distance, 3);
       forceThis[1] = -(gravityConstant * bodies[i].mass * bodies[j].mass * distanceAsVector[1]) / pow(distance, 3);
-      
+  
 
       
       bodies[i].gravPotEnergy = sqrt( pow(forceThis[0], 2) + pow(forceThis[1], 2)) * distance;  
@@ -131,26 +131,51 @@ void computeAndWrite(int64_t loop, body bodies[]){
 
     }
 
-       
-     
-
-   
-   
-  
-    for (int j = 0; j < 2; j++){
-      double k1, k3, k4, k5, k6;
-
+    /*for (int j = 0; j < 2; j++){
       bodies[i].accelerationOld[j] = bodies[i].acceleration[j];
       bodies[i].acceleration[j] = force[j] / bodies[i].mass;
 
+      k1[j] = bodies[i].accelerationOld[j];
 
+      k2[j] = (bodies[i].accelerationOld[j] + bodies[i].acceleration[j])/2;
+
+      k4[j] = bodies[i].acceleration[j];
+
+
+      bodies[i].velocityOld[j] = bodies[i].velocity[j];
+      bodies[i].velocity[j] += timeDelta*(k1[j] + 4*k2[j] + k4[j])/6;
+
+      k1[j] = bodies[i].velocityOld[j];
+
+      k2[j] = (bodies[i].velocityOld[j] + bodies[i].velocity[j])/2;
+
+      k4[j] = bodies[i].velocity[j];
+
+      bodies[i].position[j] += timeDelta*(k1[j] + 4*k2[j] + k4[j])/6;
+
+
+
+
+
+
+
+    }
+   */
+   
+  
+    for (int j = 0; j < 2; j++){
+
+      //double k1, k3, k4, k5, k6;
+      double k1, k2, k4;
+      
+      bodies[i].accelerationOld[j] = bodies[i].acceleration[j];
+      bodies[i].acceleration[j] = force[j] / bodies[i].mass;
+      /*
       k1 = bodies[i].accelerationOld[j] * timeDelta;
-      k3 = (bodies[i].acceleration[j] * timeDelta * 3) / 8;
-      k4 = (bodies[i].acceleration[j] * timeDelta * 12) / 13;
-      k5 = (bodies[i].acceleration[j] * timeDelta);
-      k6 = (bodies[i].acceleration[j] * timeDelta) / 2;
-
-
+      k3 = (bodies[i].accelerationOld[j] + (bodies[i].acceleration[j] - bodies[i].accelerationOld[j]) * 3/8 * timeDelta) * timeDelta;
+      k4 = (bodies[i].accelerationOld[j] + (bodies[i].acceleration[j] - bodies[i].accelerationOld[j]) * 12/13 * timeDelta) * timeDelta;
+      k5 = (bodies[i].accelerationOld[j] + (bodies[i].acceleration[j] - bodies[i].accelerationOld[j]) * 1 * timeDelta) * timeDelta;
+      k6 = (bodies[i].accelerationOld[j] + (bodies[i].acceleration[j] - bodies[i].accelerationOld[j]) * 1/2 * timeDelta) *  timeDelta;
 
 
 
@@ -158,18 +183,36 @@ void computeAndWrite(int64_t loop, body bodies[]){
       bodies[i].velocityOld[j] = bodies[i].velocity[j];
       bodies[i].velocity[j] += (k1*16/135) + (k3*6656/12825) + (k4*28561/56430) + (k5*-9/50) + (k6*2/55);
 
+
+ 
+
       k1 = bodies[i].velocityOld[j] * timeDelta;
-      k3 = (bodies[i].velocity[j] * timeDelta * 3) / 8;
-      k4 = (bodies[i].velocity[j] * timeDelta * 12) / 13;
-      k5 = (bodies[i].velocity[j] * timeDelta);
-      k6 = (bodies[i].velocity[j] * timeDelta) / 2;
-
+      k3 = (bodies[i].velocityOld[j] + (bodies[i].velocity[j] - bodies[i].velocityOld[j]) * 3/8 * timeDelta) * timeDelta;
+      k4 = (bodies[i].velocityOld[j] + (bodies[i].velocity[j] - bodies[i].velocityOld[j]) * 12/13 * timeDelta) * timeDelta;
+      k5 = (bodies[i].velocityOld[j] + (bodies[i].velocity[j] - bodies[i].velocityOld[j]) * 1 * timeDelta) * timeDelta;
+      k6 = (bodies[i].velocityOld[j] + (bodies[i].velocity[j] - bodies[i].velocityOld[j]) * 1/2 * timeDelta) * timeDelta; 
 
     
-
-
+      
       bodies[i].position[j] += (k1*16/135) + (k3*6656/12825) + (k4*28561/56430) + (k5*-9/50) + (k6*2/55);
+
+     */
+
+      k1 = bodies[i].accelerationOld[j];
+
+      k2 = (bodies[i].accelerationOld[j] + bodies[i].acceleration[j])/2;
     
+      k4 = bodies[i].acceleration[j];
+      bodies[i].velocityOld[j] = bodies[i].velocity[j];
+      bodies[i].velocity[j] += timeDelta*(k1 + 4*k2 + k4)/6;
+      
+      k1 = bodies[i].velocityOld[j];
+    
+      k2 = (bodies[i].velocityOld[j] + bodies[i].velocity[j])/2;
+    
+      k4 = bodies[i].velocity[j];
+      bodies[i].position[j] += timeDelta*(k1 + 4*k2 + k4)/6;
+
  
 
 
@@ -221,7 +264,7 @@ int main(){
   double posInit[][2] =
   {
     {0, 1},
-    {0, -0.5}
+    {0.1, -1.1}
   };
   double velInit[][2] =
   {
@@ -247,8 +290,8 @@ int main(){
 
 
   positions = pow(10, 6);
-  timeDelta = pow(10, -5);
-  logsPerComputation = pow(10, 3);
+  timeDelta = pow(10, -4);
+  logsPerComputation = pow(10, 2);
   compress = pow(10, 2);
 
   createOutputFolder();

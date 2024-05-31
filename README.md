@@ -19,3 +19,6 @@ The folder "outputTxtFiles" contains output of a short 5 body problem (it took a
 To compile GravSimComputationProgram with gcc, run "gcc main.c -lm" in GravSimComputationProgram directory.
 
 To compile GravSimVisualizer with gcc, you first need to install raylib (refer to https://github.com/raysan5/raylib for instructions) and then run "gcc main.c -lraylib".
+
+!NOTE!: The simulation isnt precise, there is some energy being lost!
+Im uploading this beacuse im remaking ocmputational module in julia

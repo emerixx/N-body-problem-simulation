@@ -4,7 +4,7 @@ mass (body 1): 1.000000;
 
 ----------Positions---------
 position (body 0): {0.000000, 1.000000};
-position (body 1): {0.000000, -0.500000};
+position (body 1): {0.100000, -1.100000};
 
 ----------Velocities---------
 velocity (body 0): {-2.250000, 0.000000};

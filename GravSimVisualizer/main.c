@@ -17,7 +17,9 @@ const double width = 1800;
 const double height = 900;
 const int drawScale = 100;
 
-const int offset[2] = {0,0};
+const int offsetConst[2] = {0,0};
+
+int calcOffsetEvery;
 
 
 int speed;
@@ -30,6 +32,8 @@ bool drawTrajectories = false;
 int bodies;
 
 int waitBetweenChunks = 10;
+
+double offset[2] = {0, 0};
 
 
 
@@ -141,8 +145,11 @@ int main(void)
   
   speed = pow(10, 0);
 
-  chunkSize = pow(10, 2);
+  chunkSize = pow(10, 3);
   
+  calcOffsetEvery = 1;
+
+
   double position[chunkSize][bodies][2];
   
   Color clrs[] = {RAYWHITE, MAGENTA, RED, LIME, ORANGE};
@@ -174,7 +181,7 @@ int main(void)
   ClearBackground(BLACK);
   EndDrawing();
 
-  if(drawTrajectories == false){
+  if(drawTrajectories == false && 0){
     while (1){
 
       for (int j=0; j < chunkSize -speed; j+= speed){
@@ -201,7 +208,7 @@ int main(void)
     Texture displayTexture = LoadTextureFromImage(imageBuffer);
     int x = 0;
     int y = 0;
-    printf("heree");
+    
     struct timespec ts;
       
     ts.tv_sec =  0;
@@ -211,14 +218,22 @@ int main(void)
      
       
       for (int j=0; j < chunkSize; j++){
-     
-   
+        
+        if( j % calcOffsetEvery == 0 && false){
+          for (int i=0; i < bodies; i++){
+            offset[0] += position[j][i][0] / bodies;
+            offset[1] += position[j][i][1] / bodies;
+          }
+          printf("offset: { %f , %f };\n", offset[0], offset[1]);
+        }
+        
 
       
       
         for (int i=0; i < bodies; i++){
 
-          ImageDrawPixel(&imageBuffer, (int)(width/2+position[j][i][0]*drawScale) + offset[0],(int)(height/2-position[j][i][1]*drawScale) + offset[1] ,clrs[i]);   
+
+          ImageDrawPixel(&imageBuffer, (int)(width/2+ (position[j][i][0]) * drawScale) + offsetConst[0],(int)(height/2- (position[j][i][1]) * drawScale) + offsetConst[1] ,clrs[i]);   
         
         }
         nanosleep(&ts, NULL);
@@ -235,7 +250,7 @@ int main(void)
 		  BeginDrawing();
 		  ClearBackground(BLACK);
 
-		  DrawTexture(displayTexture, 0, 0, WHITE);
+		  DrawTexture(displayTexture, offset[0], offset[1], WHITE);
 
 		  EndDrawing();
 

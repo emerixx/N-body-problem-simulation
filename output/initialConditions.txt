@@ -1,0 +1,14 @@
+----------Masses---------
+mass (body 0): 1.000000;
+mass (body 1): 1.000000;
+mass (body 2): 0.000000;
+
+----------Positions---------
+position (body 0): {0.000000, 1.000000};
+position (body 1): {0.100000, -1.100000};
+position (body 2): {-2.250000, 0.000000};
+
+----------Velocities---------
+velocity (body 0): {-2.250000, 0.000000};
+velocity (body 1): {2.250000, 0.000000};
+velocity (body 2): {0.000000, -0.000000};
